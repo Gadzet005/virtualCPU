@@ -5,43 +5,30 @@
 using namespace vm;
 using std::string;
 
-TEST(Stack, withInt) {
-    Stack s;
+TEST(StackTest, PushPop) {
+    Stack<int> stack;
+    stack.push(1);
+    stack.push(2);
+    stack.push(3);
 
-    EXPECT_TRUE(s.empty());
-    EXPECT_EQ(s.getSize(), 0);
-    EXPECT_THROW(s.top(), std::runtime_error);
-    
-    for (int i = 0; i < 20; i++) {
-        s.push(5);
-        EXPECT_EQ(s.top(), 5);
-        s.push(i);
-        EXPECT_EQ(s.top(), i);
-    }  
-
-    EXPECT_EQ(s.getSize(), 40);
-    EXPECT_FALSE(s.empty());
-    EXPECT_EQ(s.top(), 19);
-
-    s.pop();
-    EXPECT_EQ(s.top(), 5);
-    EXPECT_EQ(s.getSize(), 39);
-
-    while (!s.empty()) {
-        s.pop();
+    for (int i = 3; !stack.empty(); i--) {
+        EXPECT_EQ(stack.getSize(), i);
+        EXPECT_EQ(stack.top(), i);
+        stack.pop();
     }
 
-    EXPECT_TRUE(s.empty());
-    EXPECT_EQ(s.getSize(), 0);
+    EXPECT_THROW(stack.top(), EmptyStackError);
+    EXPECT_EQ(stack.getSize(), 0);
+    EXPECT_TRUE(stack.empty());
 }
 
-TEST(Stack, withString) {
+TEST(StackTest, withString) {
     Stack<string> s;
     string str = "???";
 
     EXPECT_TRUE(s.empty());
     EXPECT_EQ(s.getSize(), 0);
-    EXPECT_THROW(s.top(), std::runtime_error);
+    EXPECT_THROW(s.top(), EmptyStackError);
 
     s.push("hello world!");
     EXPECT_EQ(s.top(), "hello world!");
@@ -61,7 +48,7 @@ TEST(Stack, withString) {
     EXPECT_EQ(s.getSize(), 0);
 }
 
-TEST(Stack, copy) {
+TEST(StackTest, copy) {
     Stack<size_t> s1;
     for (int i = 0; i < 10; i++) {
         s1.push(i);

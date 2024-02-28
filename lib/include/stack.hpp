@@ -5,6 +5,14 @@
 
 namespace vm {
 
+class EmptyStackError : public std::exception {
+public:
+    EmptyStackError(const char* message) : msg(message) {}
+    const char* what() const noexcept override { return msg; }
+private:
+    const char* msg;
+};
+
 template<class T = int>
 class Stack {
 public:
@@ -53,7 +61,7 @@ public:
 
     T& top() const {
         if (size == 0) {
-            throw std::runtime_error("Вызов метода top на пустом стэке");
+            throw EmptyStackError("Вызов метода top на пустом стэке");
         }
         return data[size - 1];
     }
@@ -77,9 +85,9 @@ private:
     constexpr static size_t capacityIncrease = 2;
     constexpr static size_t startCapacity = 8;
 
-    T* data {nullptr};
-    size_t size {0};
-    size_t capacity {0};
+    T* data = nullptr;
+    size_t size = 0;
+    size_t capacity = 0;
 
     // Расширяет массив как минимум до newCapacity и копирует данные из toCopy (можно из самого себя)
     void resizeAndCopy(size_t newCapacity, const Stack<T>& toCopy) {
