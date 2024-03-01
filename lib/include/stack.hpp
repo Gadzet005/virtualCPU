@@ -23,19 +23,29 @@ public:
     }
 
     Stack(Stack<T>&& other) {
-        *this = other;
+        *this = std::move(other);
     }
 
     Stack<T>& operator = (const Stack<T>& other) {
-        resizeAndCopy(other.capacity, other);
+        T* newData = nullptr;
+        if (other.capacity != 0) {
+            newData = new T[other.capacity];
+            for (int i = 0; i < other.size; i++) {
+                newData[i] = other.data[i];
+            }
+        }
+
+        delete[] data;
+        data = newData;
+
+        capacity = other.capacity;
+        size = other.size;
+
         return *this;
     }
 
     Stack<T>& operator = (Stack<T>&& other) {
-        std::swap(data, other.data);
-        size = other.size;
-        capacity = other.capacity;
-
+        swap(other);
         return *this;
     }
 
@@ -44,19 +54,19 @@ public:
     }
 
     void push(const T& elem) {
-        _push();
+        if (size == capacity) resize();
         data[size++] = elem;
     }
 
     void push(T&& elem) {
-        _push();
-        std::swap(data[size++], elem);
+        push(elem);
     }
 
     void pop() {
-        if (size != 0) {
-            size--;
+        if (size == 0) {
+            throw EmptyStackError("Вызов метода pop на пустом стэке");
         }
+        size--;
     }
 
     T& top() const {
@@ -81,42 +91,31 @@ public:
         size = 0;
     }
 
+    void swap(Stack<T>& other) {
+        std::swap(data, other.data);
+        std::swap(size, other.size);
+        std::swap(capacity, other.capacity);
+    }
+
 private:
-    constexpr static size_t capacityIncrease = 2;
-    constexpr static size_t startCapacity = 8;
+    constexpr static size_t CAPACITY_COEF = 2;
+    constexpr static size_t START_CAPACITY = 8;
 
     T* data = nullptr;
     size_t size = 0;
     size_t capacity = 0;
 
     // Расширяет массив как минимум до newCapacity и копирует данные из toCopy (можно из самого себя)
-    void resizeAndCopy(size_t newCapacity, const Stack<T>& toCopy) {
-        newCapacity = std::max(newCapacity, toCopy.capacity);
-
-        if (capacity >= newCapacity) {
-            for (int i = 0; i < toCopy.size; i++) {
-                data[i] = toCopy.data[i];
-            }
-        } else {
-            T* newData = new T[newCapacity];
-            for (int i = 0; i < toCopy.size; i++) {
-                newData[i] = toCopy.data[i];
-            }
-
-            std::swap(newData, data);
-            delete[] newData;
-            capacity = newCapacity;
+    void resize() {
+        size_t newCapacity = std::max(capacity * CAPACITY_COEF, START_CAPACITY);
+        T* newData = new T[newCapacity];
+        for (int i = 0; i < size; i++) {
+            newData[i] = data[i];
         }
 
-        size = toCopy.size;
-    }
-
-    void _push() {
-        if (size == capacity) {
-            resizeAndCopy(
-                std::max(startCapacity, capacity * capacityIncrease), *this
-            );
-        }
+        delete[] data;
+        data = newData;
+        capacity = newCapacity;
     }
 
 };

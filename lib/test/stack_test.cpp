@@ -18,6 +18,7 @@ TEST(StackTest, PushPop) {
     }
 
     EXPECT_THROW(stack.top(), EmptyStackError);
+    EXPECT_THROW(stack.pop(), EmptyStackError);
     EXPECT_EQ(stack.getSize(), 0);
     EXPECT_TRUE(stack.empty());
 }
@@ -29,6 +30,7 @@ TEST(StackTest, withString) {
     EXPECT_TRUE(s.empty());
     EXPECT_EQ(s.getSize(), 0);
     EXPECT_THROW(s.top(), EmptyStackError);
+    EXPECT_THROW(s.pop(), EmptyStackError);
 
     s.push("hello world!");
     EXPECT_EQ(s.top(), "hello world!");
