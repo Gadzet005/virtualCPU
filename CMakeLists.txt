@@ -1,7 +1,12 @@
 cmake_minimum_required(VERSION 3.14)
 project(virtualCPU)
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 add_subdirectory(lib)
+
+file(COPY data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 # bin
 add_executable(Main bin/main.cpp)

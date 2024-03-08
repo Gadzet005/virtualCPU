@@ -1,9 +1,13 @@
 #include <iostream>
+#include "parser.hpp"
+
 
 int main() {
     using namespace std;
+    using namespace vm;
 
-    // Пока тут пусто
+    Parser parser;
+    Program program = parser.parseProgram("data/programs/program2.txt");
 
     return 0;
 }
