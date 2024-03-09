@@ -1,0 +1,37 @@
+// Первые 40 чисел Фибоначи
+begin
+
+// Первые 2 числа фибоначи
+push 1
+push 1
+out
+out
+popr a
+popr b
+
+// счетчик
+push 0
+popr i
+
+cicle:
+    // b, a -> a, a + b
+    pushr a
+    pushr b
+    add
+    pushr a
+    popr b
+    out
+    popr a
+
+    // i++
+    pushr i
+    push 1
+    add
+    popr i
+
+    pushr i
+    push 38
+
+    jumpneq cicle
+
+end

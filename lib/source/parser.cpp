@@ -2,6 +2,18 @@
 
 namespace vm {
 
+bool Parser::validateCommandArg(const std::string& arg, ArgType type) {
+    switch (type) {
+        case ArgType::Int:
+            return std::regex_match(arg, NUMBER);
+        case ArgType::Reg:
+            return std::regex_match(arg, REG);
+        case ArgType::Label:
+            return std::regex_match(arg, LABEL_NAME);
+    }
+    return false;
+}
+
 Program Parser::parseProgram(const char* path) {
     std::ifstream file;
     file.open(path);
@@ -29,6 +41,23 @@ Program Parser::parseProgram(const char* path) {
             if (command == nullptr) {
                 throw ParseError(std::string("Неизвестная команда: ") + token, lineIdx);
             }
+            
+            // Аргументы команды
+            std::string arg;
+            std::vector<std::string> args;
+            std::vector<ArgType> types = command->getArgTypes();
+            for (int i = 0; i < types.size() && lineStream >> arg; i++) {
+                if (!validateCommandArg(arg, types[i])) {
+                    throw ParseError(std::string("Неверный тип аргумента: ") + arg, lineIdx);
+                }
+                args.push_back(arg);
+            }
+
+            if (args.size() != types.size()) {
+                throw ParseError(std::string("Слишком мало аргументов для команды: ") + token, lineIdx);
+            }
+
+            command->setArgs(args);
             program.addCommand(command);
         } else {
             throw ParseError("Ошибка синтаксиса", lineIdx);

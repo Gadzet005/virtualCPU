@@ -20,12 +20,18 @@ private:
 
 class Parser {
 public:
-    Program parseProgram(const char* path);
+    static Program parseProgram(const char* path);
+    static bool validateCommandArg(const std::string& arg, ArgType type);
 private:
     // Команды. Обязательно начинается с буквы, затем могут идти буквы или цифры
-    const std::regex COMMAND = std::regex(R"([a-zA-z]\w*)", std::regex::icase);
-    // Метки, по аналогии с командами
-    const std::regex LABEL = std::regex(R"(([a-zA-z]\w*):)", std::regex::icase);
+    inline static const std::regex COMMAND = std::regex(R"([a-zA-z]\w*)", std::regex::icase);
+    // Метки. По аналогии с командами
+    inline static const std::regex LABEL = std::regex(R"(([a-zA-z]\w*):)", std::regex::icase);
+    inline static const std::regex LABEL_NAME = std::regex(R"([a-zA-z]\w*)", std::regex::icase);
+    // Числа
+    inline static const std::regex NUMBER = std::regex(R"(-?\d+)");
+    // Регистры
+    inline static const std::regex REG = std::regex(R"([a-zA-z]+)");
 };
 
 }

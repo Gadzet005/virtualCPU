@@ -4,6 +4,9 @@ project(virtualCPU)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+add_compile_options(-fsanitize=address)
+add_link_options(-fsanitize=address)
+
 add_subdirectory(lib)
 
 file(COPY data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

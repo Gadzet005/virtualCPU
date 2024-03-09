@@ -7,9 +7,9 @@ int main() {
     using namespace std;
     using namespace vm;
 
-    Parser parser;
     Processor processor;
-    Program program = parser.parseProgram("data/programs/program2.txt");
+    Program program = Parser::parseProgram("data/programs/program2.txt");
+    
     processor.executeProgram(program);
 
     return 0;
