@@ -1,10 +1,8 @@
-
+// Сложение двух чисел
 begin
-
     in
     in
     
     add
     out
-
 end

@@ -62,11 +62,12 @@ public:
         push(elem);
     }
 
-    void pop() {
+    T pop() {
         if (size == 0) {
             throw EmptyStackError("Вызов метода pop на пустом стэке");
         }
         size--;
+        return std::move(data[size]);
     }
 
     T& top() const {
