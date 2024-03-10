@@ -11,8 +11,9 @@ namespace vm {
 class Program {
 public:
     void addCommand(Command* cmd);
-    void addLabel(const std::string& label);
     Command* getCurCommand();
+
+    void addLabel(const std::string& label);
     void jumpToLabel(const std::string& label);
 
     void compile();

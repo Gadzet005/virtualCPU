@@ -13,4 +13,9 @@ void Processor::executeProgram(Program& program) {
     curProgram = nullptr;
 }
 
+void Processor::clear() {
+    stack.clear();
+    registers.clear();
+}
+
 }

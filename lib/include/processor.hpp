@@ -12,15 +12,17 @@ public:
     Processor(std::istream& input, std::ostream& output) : 
         in(input), out(output) {};
 
-    std::istream& getInput() { return in; }
-    std::ostream& getOutput() { return out; }
+    std::istream& getInput() const { return in; }
+    std::ostream& getOutput() const { return out; }
     Stack<int>& getStack() { return stack; }
 
     void setRegister(const std::string& name, int value) { registers[name] = value; }
     int getRegister(const std::string& name) const { return registers.at(name); }
 
     void executeProgram(Program& program);
-    Program& getCurProgram() { return *curProgram; }
+    Program& getCurProgram() const { return *curProgram; }
+
+    void clear();
 
 private:
     Stack<int> stack;
