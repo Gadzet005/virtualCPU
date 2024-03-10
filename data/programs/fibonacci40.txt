@@ -6,6 +6,8 @@ push 1
 push 1
 out
 out
+push 1
+push 1
 popr a
 popr b
 
@@ -20,8 +22,10 @@ cicle:
     add
     pushr a
     popr b
-    out
     popr a
+
+    pushr a
+    out
 
     // i++
     pushr i
@@ -32,6 +36,6 @@ cicle:
     pushr i
     push 38
 
-    jumpneq cicle
+    jne cicle
 
 end

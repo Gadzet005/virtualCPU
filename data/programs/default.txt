@@ -1,0 +1,23 @@
+begin
+    jmp func1
+    ret1:
+    jmp func2
+    ret2:
+    jmp func3
+    exit:
+end
+
+func1:
+    push 1
+    out
+    jmp ret1
+
+func2:
+    push 2
+    out
+    jmp ret2
+
+func3:
+    push 3
+    out
+    jmp exit

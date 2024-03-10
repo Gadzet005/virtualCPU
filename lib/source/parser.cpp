@@ -2,9 +2,13 @@
 
 namespace vm {
 
+void toLower(std::string& str) {
+    std::transform(str.begin(), str.end(), str.begin(), [](char c){ return std::tolower(c); });
+}
+
 bool Parser::validateCommandArg(const std::string& arg, ArgType type) {
     switch (type) {
-        case ArgType::Int:
+        case ArgType::Number:
             return std::regex_match(arg, NUMBER);
         case ArgType::Reg:
             return std::regex_match(arg, REG);
@@ -14,7 +18,7 @@ bool Parser::validateCommandArg(const std::string& arg, ArgType type) {
     return false;
 }
 
-Program Parser::parseProgram(const char* path) {
+Program Parser::parseProgram(const std::string& path) {
     std::ifstream file;
     file.open(path);
     if (!file.is_open()) {
@@ -37,7 +41,8 @@ Program Parser::parseProgram(const char* path) {
         } else if (std::regex_match(token, result, LABEL)) {
             program.addLabel(result[1]);
         } else if (std::regex_match(token, result, COMMAND)) {
-            Command* command = createCommandByName(result[0]);
+            toLower(token);
+            Command* command = createCommandByName(token);
             if (command == nullptr) {
                 throw ParseError(std::string("Неизвестная команда: ") + token, lineIdx);
             }

@@ -1,17 +1,9 @@
 #pragma once
-
 #include <algorithm>
+#include "exceptions.hpp"
 
 
 namespace vm {
-
-class EmptyStackError : public std::exception {
-public:
-    EmptyStackError(const char* message) : msg(message) {}
-    const char* what() const noexcept override { return msg; }
-private:
-    const char* msg;
-};
 
 template<class T = int>
 class Stack {

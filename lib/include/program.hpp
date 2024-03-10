@@ -4,21 +4,9 @@
 #include <memory>
 #include <string>
 #include "commands.hpp"
+#include "exceptions.hpp"
 
 namespace vm {
-
-class ProgramError : public std::exception {
-public:
-    ProgramError(const std::string& message) : msg(message) {}
-    const char* what() const noexcept override { return msg.c_str(); }
-private:
-    const std::string msg;
-};
-
-class MultipleUseError : public ProgramError {
-public:
-    MultipleUseError(const std::string& message) : ProgramError(message) {}
-};
 
 class Program {
 public:
@@ -27,16 +15,16 @@ public:
     Command* getCurCommand();
     void jumpToLabel(const std::string& label);
 
+    void compile();
+    bool isCompiled() const { return compiled; };
+
 private:
     std::vector<std::unique_ptr<Command>> commands;
     std::map<std::string, int> labels;
 
-    size_t startIdx = 0;
-    bool startFound = false;
-    size_t endIdx = 0;
-    bool endFound = false;
-
     size_t currentIdx = 0;
+
+    bool compiled = false;
 };
 
 }

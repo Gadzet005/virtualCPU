@@ -1,24 +1,15 @@
 #pragma once
 #include <string>
 #include <vector>
+#include "exceptions.hpp"
 
 namespace vm {
 
 // Forward declarations
 class Processor;
 
-class ArgError : public std::exception {
-public:
-    ArgError(const std::string& message) : msg(message) {}
-    const char* what() const noexcept override { return msg.c_str(); }
-private:
-    const std::string msg;
-};
-
 enum class ArgType {
-    Int, 
-    Reg,
-    Label
+    Number, Reg, Label
 };
 
 class Command {
@@ -33,7 +24,7 @@ public:
     virtual std::vector<ArgType> getArgTypes() const { return {}; }
 };
 
-Command* createCommandByName(const std::string name);
+Command* createCommandByName(const std::string& name);
 
 class Begin : public Command {
 public:
@@ -84,7 +75,7 @@ class Push : public Command {
 public:
     void execute(Processor& proc) override;
     void setArgs(const std::vector<std::string>& args) override;
-    std::vector<ArgType> getArgTypes() const { return {ArgType::Int}; }
+    std::vector<ArgType> getArgTypes() const { return {ArgType::Number}; }
 
 private:
     int value;
@@ -96,18 +87,12 @@ public:
     void setArgs(const std::vector<std::string>& args) override;
     std::vector<ArgType> getArgTypes() const { return {ArgType::Reg}; }
 
-private:
+protected:
     std::string reg;
 };
 
-class Popr : public Command {
-public:
+class Popr : public Pushr {
     void execute(Processor& proc) override;
-    void setArgs(const std::vector<std::string>& args) override;
-    std::vector<ArgType> getArgTypes() const { return {ArgType::Reg}; }
-
-private:
-    std::string reg;
 };
 
 class Jump : public Command {
@@ -125,6 +110,30 @@ class JumpEQ : public Jump {
 };
 
 class JumpNEQ : public Jump {
+    void execute(Processor& proc) override;
+};
+
+class JumpG : public Jump {
+    void execute(Processor& proc) override;
+};
+
+class JumpGE : public Jump {
+    void execute(Processor& proc) override;
+};
+
+class JumpL : public Jump {
+    void execute(Processor& proc) override;
+};
+
+class JumpLE : public Jump {
+    void execute(Processor& proc) override;
+};
+
+class Call : public Jump {
+    void execute(Processor& proc) override;
+};
+
+class Ret : public Command {
     void execute(Processor& proc) override;
 };
 

@@ -2,35 +2,54 @@
 
 namespace vm {
 
-void Program::addCommand(Command* cmd) {
-    if (typeid(*cmd) == typeid(Begin)) {
-        if (startFound) {
-            throw MultipleUseError("Допускается только одна команда begin");
-        }
-        startIdx = commands.size();
-        startFound = true;
-    }
-    if (typeid(*cmd) == typeid(End)) {
-        if (!startFound) {
-            throw ProgramError("Команда end до команды begin");
-        }
-        if (endFound) {
-            throw MultipleUseError("Допускается только одна команда end");
-        }
-        endIdx = commands.size();
-        endFound = true;
-    }
-    if (!endFound) {
-        endIdx++;
-    }
-    if (!startFound) {
-        currentIdx++;
+void Program::compile() {
+    if (isCompiled()) {
+        return;
     }
 
+    size_t startIdx = 0;
+    bool startFound = false;
+    bool endFound = false;
+
+    for (int i = 0; i < commands.size(); i++) {
+        Command* cmd = commands[i].get();
+        if (typeid(*cmd) == typeid(Begin)) {
+            if (startFound) {
+                throw MultipleUseError("Допускается только одна команда begin");
+            }
+            startIdx = i;
+            startFound = true;
+        }
+        if (typeid(*cmd) == typeid(End)) {
+            if (!startFound) {
+                throw ProgramError("Команда end до команды begin");
+            }
+            if (endFound) {
+                throw MultipleUseError("Допускается только одна команда end");
+            }
+            endFound = true;
+        }
+    }
+
+    if (!startFound || !endFound) {
+        throw ProgramError("Команда begin или end не найдены");
+    }
+
+    currentIdx = startIdx;
+    compiled = true;
+}
+
+void Program::addCommand(Command* cmd) {
+    if (isCompiled()) {
+        throw CompiledProgramError("Допускается добавлять команду только до компиляции");
+    }
     commands.push_back(std::unique_ptr<Command>(cmd));
 }
 
 void Program::addLabel(const std::string& label) {
+    if (isCompiled()) {
+        throw CompiledProgramError("Допускается добавлять метки только до компиляции");
+    }
     if (labels.find(label) != labels.end()) {
         throw MultipleUseError("Повторное использование метки " + label);
     }

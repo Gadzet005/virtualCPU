@@ -20,7 +20,6 @@ public:
     int getRegister(const std::string& name) const { return registers.at(name); }
 
     void executeProgram(Program& program);
-
     Program& getCurProgram() { return *curProgram; }
 
 private:

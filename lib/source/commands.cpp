@@ -3,7 +3,8 @@
 
 namespace vm {
 
-Command* createCommandByName(const std::string name) {
+// Соответствие имени команды с самой командой
+Command* createCommandByName(const std::string& name) {
     if (name == "begin") {
         return new Begin();
     } else if (name == "end") {
@@ -28,16 +29,29 @@ Command* createCommandByName(const std::string name) {
         return new Pushr();
     } else if (name == "popr") {
         return new Popr();
-    } else if (name == "jump") {
+    } else if (name == "jmp") {
         return new Jump();
-    } else if (name == "jumpeq") {
+    } else if (name == "jeq") {
         return new JumpEQ();
-    } else if (name == "jumpneq") {
+    } else if (name == "jne") {
         return new JumpNEQ();
-    } else {
-        return nullptr;
+    } else if (name == "ja") {
+        return new JumpG();
+    } else if (name == "jae") {
+        return new JumpGE();
+    } else if (name == "jb") {
+        return new JumpL();
+    } else if (name == "jbe") {
+        return new JumpLE();
+    } else if (name == "call") {
+        return new Call();
+    } else if (name == "ret") {
+        return new Ret();
     }
+
+    return nullptr;
 }
+
 
 void In::execute(Processor& proc) {
     int value;
@@ -46,8 +60,9 @@ void In::execute(Processor& proc) {
 }
 
 void Out::execute(Processor& proc) {
-    proc.getOutput() << proc.getStack().top() << std::endl;
+    proc.getOutput() << proc.getStack().pop() << std::endl;
 }
+
 
 void Add::execute(Processor& proc) {
     int a = proc.getStack().pop();
@@ -73,6 +88,7 @@ void Div::execute(Processor& proc) {
     proc.getStack().push(b / a);
 }
 
+
 void Pop::execute(Processor& proc) {
     proc.getStack().pop();
 }
@@ -85,21 +101,24 @@ void Push::execute(Processor& proc) {
     proc.getStack().push(value);
 }
 
+
 void Pushr::setArgs(const std::vector<std::string>& args) {
     reg = args[0];
 }
 
 void Pushr::execute(Processor& proc) {
-    proc.getStack().push(proc.getRegister(reg));
-}
-
-void Popr::setArgs(const std::vector<std::string>& args) {
-    reg = args[0];
+    try {
+        int value = proc.getRegister(reg);
+        proc.getStack().push(value);
+    } catch (const std::out_of_range& e) {
+        throw CommandRuntimeError("Обращение к несуществующему регистру");
+    }
 }
 
 void Popr::execute(Processor& proc) {
     proc.setRegister(reg, proc.getStack().pop());
 }
+
 
 void Jump::setArgs(const std::vector<std::string>& args) {
     label = args[0];
@@ -119,6 +138,37 @@ void JumpNEQ::execute(Processor& proc) {
     if (proc.getStack().pop() != proc.getStack().pop()) {
         proc.getCurProgram().jumpToLabel(label);
     }
+}
+void JumpG::execute(Processor& proc) {
+    if (proc.getStack().pop() > proc.getStack().pop()) {
+        proc.getCurProgram().jumpToLabel(label);
+    }
+}
+
+void JumpGE::execute(Processor& proc) {
+    if (proc.getStack().pop() >= proc.getStack().pop()) {
+        proc.getCurProgram().jumpToLabel(label);
+    }
+}
+
+void JumpL::execute(Processor& proc) {
+    if (proc.getStack().pop() < proc.getStack().pop()) {
+        proc.getCurProgram().jumpToLabel(label);
+    }
+}
+
+void JumpLE::execute(Processor& proc) {
+    if (proc.getStack().pop() <= proc.getStack().pop()) {
+        proc.getCurProgram().jumpToLabel(label);
+    }
+}
+
+void Call::execute(Processor& proc) {
+
+}
+
+void Ret::execute(Processor& proc) {
+
 }
 
 }
