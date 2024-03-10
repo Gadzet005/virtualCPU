@@ -15,9 +15,11 @@ public:
 
     void addLabel(const std::string& label);
     void jumpToLabel(const std::string& label);
+    void jumpToIdx(size_t idx);
 
     void compile();
-    bool isCompiled() const { return compiled; };
+    bool isCompiled() const { return compiled; }
+    size_t getCurIdx() const { return currentIdx; }
 
 private:
     std::vector<std::unique_ptr<Command>> commands;

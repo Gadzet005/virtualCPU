@@ -74,4 +74,11 @@ void Program::jumpToLabel(const std::string& label) {
     currentIdx = labels[label];
 }
 
+void Program::jumpToIdx(size_t idx) {
+    if (idx >= commands.size()) {
+        throw ProgramError("Невозможно прыгнуть по индексу: " + std::to_string(idx));
+    }
+    currentIdx = idx;
+}
+
 }

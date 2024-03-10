@@ -59,7 +59,7 @@ public:
             throw EmptyStackError("Вызов метода pop на пустом стэке");
         }
         size--;
-        return std::move(data[size]);
+        return data[size];
     }
 
     T& top() const {

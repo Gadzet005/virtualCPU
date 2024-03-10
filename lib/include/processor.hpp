@@ -3,6 +3,7 @@
 #include <map>
 #include "stack.hpp"
 #include "program.hpp"
+#include "processor_stack.hpp"
 
 namespace vm {
 
@@ -14,7 +15,7 @@ public:
 
     std::istream& getInput() const { return in; }
     std::ostream& getOutput() const { return out; }
-    Stack<int>& getStack() { return stack; }
+    ProcessorStack& getStack() { return stack; }
 
     void setRegister(const std::string& name, int value) { registers[name] = value; }
     int getRegister(const std::string& name) const { return registers.at(name); }
@@ -25,7 +26,7 @@ public:
     void clear();
 
 private:
-    Stack<int> stack;
+    ProcessorStack stack;
     std::map<std::string, int> registers;
     std::istream& in = std::cin;
     std::ostream& out = std::cout;

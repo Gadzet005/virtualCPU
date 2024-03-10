@@ -1,0 +1,36 @@
+factorial:
+    push 1
+    popr res
+    call recursive_factorial
+    ret
+
+return:
+    ret
+
+recursive_factorial:
+    push 1
+    pushr n
+    jbe return // return если n <= 1
+
+    // res *= n
+    pushr res
+    pushr n
+    mul
+    popr res
+
+    // n--
+    pushr n
+    push 1
+    sub
+    popr n
+
+    call recursive_factorial
+    ret
+
+begin
+    in
+    popr n
+    call factorial
+    pushr res
+    out
+end

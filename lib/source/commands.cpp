@@ -56,41 +56,41 @@ Command* createCommandByName(const std::string& name) {
 void In::execute(Processor& proc) {
     int value;
     proc.getInput() >> value;
-    proc.getStack().push(value);
+    proc.getStack().pushValue(value);
 }
 
 void Out::execute(Processor& proc) {
-    proc.getOutput() << proc.getStack().pop() << std::endl;
+    proc.getOutput() << proc.getStack().popValue() << std::endl;
 }
 
 
 void Add::execute(Processor& proc) {
-    int a = proc.getStack().pop();
-    int b = proc.getStack().pop();
-    proc.getStack().push(a + b);
+    int a = proc.getStack().popValue();
+    int b = proc.getStack().popValue();
+    proc.getStack().pushValue(a + b);
 }
 
 void Sub::execute(Processor& proc) {
-    int a = proc.getStack().pop();
-    int b = proc.getStack().pop();
-    proc.getStack().push(b - a);
+    int a = proc.getStack().popValue();
+    int b = proc.getStack().popValue();
+    proc.getStack().pushValue(b - a);
 }
 
 void Mul::execute(Processor& proc) {
-    int a = proc.getStack().pop();
-    int b = proc.getStack().pop();
-    proc.getStack().push(a * b);
+    int a = proc.getStack().popValue();
+    int b = proc.getStack().popValue();
+    proc.getStack().pushValue(a * b);
 }
 
 void Div::execute(Processor& proc) {
-    int a = proc.getStack().pop();
-    int b = proc.getStack().pop();
-    proc.getStack().push(b / a);
+    int a = proc.getStack().popValue();
+    int b = proc.getStack().popValue();
+    proc.getStack().pushValue(b / a);
 }
 
 
 void Pop::execute(Processor& proc) {
-    proc.getStack().pop();
+    proc.getStack().popValue();
 }
 
 void Push::setArgs(const std::vector<std::string>& args) {
@@ -98,7 +98,7 @@ void Push::setArgs(const std::vector<std::string>& args) {
 }
 
 void Push::execute(Processor& proc) {
-    proc.getStack().push(value);
+    proc.getStack().pushValue(value);
 }
 
 
@@ -109,14 +109,14 @@ void Pushr::setArgs(const std::vector<std::string>& args) {
 void Pushr::execute(Processor& proc) {
     try {
         int value = proc.getRegister(reg);
-        proc.getStack().push(value);
+        proc.getStack().pushValue(value);
     } catch (const std::out_of_range& e) {
         throw CommandRuntimeError("Обращение к несуществующему регистру");
     }
 }
 
 void Popr::execute(Processor& proc) {
-    proc.setRegister(reg, proc.getStack().pop());
+    proc.setRegister(reg, proc.getStack().popValue());
 }
 
 
@@ -129,46 +129,53 @@ void Jump::execute(Processor& proc) {
 }
 
 void JumpEQ::execute(Processor& proc) {
-    if (proc.getStack().pop() == proc.getStack().pop()) {
+    if (proc.getStack().popValue() == proc.getStack().popValue()) {
         proc.getCurProgram().jumpToLabel(label);
     }
 }
 
 void JumpNEQ::execute(Processor& proc) {
-    if (proc.getStack().pop() != proc.getStack().pop()) {
+    if (proc.getStack().popValue() != proc.getStack().popValue()) {
         proc.getCurProgram().jumpToLabel(label);
     }
 }
 void JumpG::execute(Processor& proc) {
-    if (proc.getStack().pop() > proc.getStack().pop()) {
+    if (proc.getStack().popValue() > proc.getStack().popValue()) {
         proc.getCurProgram().jumpToLabel(label);
     }
 }
 
 void JumpGE::execute(Processor& proc) {
-    if (proc.getStack().pop() >= proc.getStack().pop()) {
+    if (proc.getStack().popValue() >= proc.getStack().popValue()) {
         proc.getCurProgram().jumpToLabel(label);
     }
 }
 
 void JumpL::execute(Processor& proc) {
-    if (proc.getStack().pop() < proc.getStack().pop()) {
+    if (proc.getStack().popValue() < proc.getStack().popValue()) {
         proc.getCurProgram().jumpToLabel(label);
     }
 }
 
 void JumpLE::execute(Processor& proc) {
-    if (proc.getStack().pop() <= proc.getStack().pop()) {
+    if (proc.getStack().popValue() <= proc.getStack().popValue()) {
         proc.getCurProgram().jumpToLabel(label);
     }
 }
 
 void Call::execute(Processor& proc) {
-
+    int calledFrom = proc.getCurProgram().getCurIdx();
+    proc.getStack().pushFunction(calledFrom);
+    proc.getCurProgram().jumpToLabel(label);
 }
 
 void Ret::execute(Processor& proc) {
-
+    try {
+        int calledFrom = proc.getStack().popFunction();
+        proc.getCurProgram().jumpToIdx(calledFrom);
+    } catch (const EmptyStackError& e) {
+        throw CommandRuntimeError("Вызов команды ret без вызова команды call");
+    }
 }
 
 }

@@ -13,9 +13,9 @@ compute:
 
 	popr ax // записываем вершину стека в ax
 
-	pushr ax
 	push 0
-	jae return
+	pushr ax
+	jae return // D >= 0
 
 	// ветвление ради ветвления
 	push -1
@@ -24,7 +24,7 @@ compute:
 return:
 	ret // откатывает стек в состояние до вызова
 
-beg
+begin
 	in
 	popr ax
 	in
