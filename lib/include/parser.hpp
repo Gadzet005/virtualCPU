@@ -10,7 +10,7 @@ namespace vm {
 
 namespace Parser {
     Program parseProgram(const std::string& path);
-    bool validateCommandArg(const std::string& arg, ArgType type);
+    bool validateCommandArg(const std::string& arg, Command::ArgType type);
 
     // Команды. Обязательно начинается с буквы, затем могут идти буквы или цифры
     const std::regex COMMAND = std::regex(R"([a-z]\w*)", std::regex::icase);

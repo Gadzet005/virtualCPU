@@ -33,11 +33,6 @@ public:
     ProgramError(const std::string& message) : BaseError(message) {};
 };
 
-class CompiledProgramError : public BaseError {
-public:
-    CompiledProgramError(const std::string& message) : BaseError(message) {};
-};
-
 class EmptyStackError : public BaseError {
 public:
     EmptyStackError(const std::string& message) : BaseError(message) {}

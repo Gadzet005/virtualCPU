@@ -6,13 +6,13 @@ void toLower(std::string& str) {
     std::transform(str.begin(), str.end(), str.begin(), [](char c){ return std::tolower(c); });
 }
 
-bool Parser::validateCommandArg(const std::string& arg, ArgType type) {
+bool Parser::validateCommandArg(const std::string& arg, Command::ArgType type) {
     switch (type) {
-        case ArgType::Number:
+        case Command::ArgType::Number:
             return std::regex_match(arg, NUMBER);
-        case ArgType::Reg:
+        case Command::ArgType::Reg:
             return std::regex_match(arg, REG);
-        case ArgType::Label:
+        case Command::ArgType::Label:
             return std::regex_match(arg, LABEL_NAME);
     }
     return false;
@@ -50,7 +50,7 @@ Program Parser::parseProgram(const std::string& path) {
             // Аргументы команды
             std::string arg;
             std::vector<std::string> args;
-            std::vector<ArgType> types = command->getArgTypes();
+            std::vector<Command::ArgType> types = command->getArgTypes();
             for (int i = 0; i < types.size() && lineStream >> arg; i++) {
                 if (!validateCommandArg(arg, types[i])) {
                     throw ParseError(std::string("Неверный тип аргумента: ") + arg, lineIdx);

@@ -41,11 +41,7 @@ public:
     int popValue();
     size_t popFunction();
 
-    void clear() { clear(); }
-
-private:
-    ProcessorStack(const ProcessorStack& other) = delete;
-    ProcessorStack& operator = (const ProcessorStack& other) = delete;
+    void clear() { Stack<std::shared_ptr<StackEntity>>::clear(); }
 };
 
 }

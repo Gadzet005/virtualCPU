@@ -1,54 +1,33 @@
 #include "commands.hpp"
 #include "processor.hpp"
 
+#define ADD_COMMAND(objName, obj) if (name == objName) return new obj();
+
 namespace vm {
 
 // Соответствие имени команды с самой командой
 Command* createCommandByName(const std::string& name) {
-    if (name == "begin") {
-        return new Begin();
-    } else if (name == "end") {
-        return new End();
-    } else if (name == "in") {
-        return new In();
-    } else if (name == "out") {
-        return new Out();
-    } else if (name == "add") {
-        return new Add();
-    } else if (name == "sub") {
-        return new Sub();
-    } else if (name == "mul") {
-        return new Mul();
-    } else if (name == "div") {
-        return new Div();
-    } else if (name == "pop") {
-        return new Pop();
-    } else if (name == "push") {
-        return new Push();
-    } else if (name == "pushr") {
-        return new Pushr();
-    } else if (name == "popr") {
-        return new Popr();
-    } else if (name == "jmp") {
-        return new Jump();
-    } else if (name == "jeq") {
-        return new JumpEQ();
-    } else if (name == "jne") {
-        return new JumpNEQ();
-    } else if (name == "ja") {
-        return new JumpG();
-    } else if (name == "jae") {
-        return new JumpGE();
-    } else if (name == "jb") {
-        return new JumpL();
-    } else if (name == "jbe") {
-        return new JumpLE();
-    } else if (name == "call") {
-        return new Call();
-    } else if (name == "ret") {
-        return new Ret();
-    }
-
+    ADD_COMMAND("begin", Begin);
+    ADD_COMMAND("end", End);
+    ADD_COMMAND("in", In);
+    ADD_COMMAND("out", Out);
+    ADD_COMMAND("add", Add);
+    ADD_COMMAND("sub", Sub);
+    ADD_COMMAND("mul", Mul);
+    ADD_COMMAND("div", Div);
+    ADD_COMMAND("pop", Pop);
+    ADD_COMMAND("push", Push);
+    ADD_COMMAND("pushr", Pushr);
+    ADD_COMMAND("popr", Popr);
+    ADD_COMMAND("jmp", Jump);
+    ADD_COMMAND("jeq", JumpEQ);
+    ADD_COMMAND("jne", JumpNEQ);
+    ADD_COMMAND("ja", JumpG);
+    ADD_COMMAND("jae", JumpGE);
+    ADD_COMMAND("jb", JumpL);
+    ADD_COMMAND("jbe", JumpLE);
+    ADD_COMMAND("call", Call);
+    ADD_COMMAND("ret", Ret);
     return nullptr;
 }
 

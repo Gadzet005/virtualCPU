@@ -25,6 +25,7 @@ private:
     std::vector<std::unique_ptr<Command>> commands;
     std::map<std::string, int> labels;
 
+    size_t beginIdx = 0;
     size_t currentIdx = 0;
 
     bool compiled = false;

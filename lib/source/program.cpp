@@ -4,6 +4,7 @@ namespace vm {
 
 void Program::compile() {
     if (isCompiled()) {
+        currentIdx = beginIdx;
         return;
     }
 
@@ -36,20 +37,15 @@ void Program::compile() {
     }
 
     currentIdx = startIdx;
+    beginIdx = startIdx;
     compiled = true;
 }
 
 void Program::addCommand(Command* cmd) {
-    if (isCompiled()) {
-        throw CompiledProgramError("Допускается добавлять команду только до компиляции");
-    }
     commands.push_back(std::unique_ptr<Command>(cmd));
 }
 
 void Program::addLabel(const std::string& label) {
-    if (isCompiled()) {
-        throw CompiledProgramError("Допускается добавлять метки только до компиляции");
-    }
     if (labels.find(label) != labels.end()) {
         throw MultipleUseError("Повторное использование метки " + label);
     }
@@ -75,7 +71,7 @@ void Program::jumpToLabel(const std::string& label) {
 }
 
 void Program::jumpToIdx(size_t idx) {
-    if (idx >= commands.size()) {
+    if (idx > commands.size()) {
         throw ProgramError("Невозможно прыгнуть по индексу: " + std::to_string(idx));
     }
     currentIdx = idx;

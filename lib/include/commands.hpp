@@ -8,13 +8,11 @@ namespace vm {
 // Forward declarations
 class Processor;
 
-enum class ArgType {
-    Number, Reg, Label
-};
-
 class Command {
 public:
-    virtual ~Command() {}
+    enum class ArgType {
+        Number, Reg, Label
+    };
 
     // Выполнение команды
     virtual void execute(Processor& proc) = 0;
@@ -22,6 +20,8 @@ public:
     virtual void setArgs(const std::vector<std::string>& args) {};
     // Получить типы аргументов команды
     virtual std::vector<ArgType> getArgTypes() const { return {}; }
+
+    virtual ~Command() = default;
 };
 
 Command* createCommandByName(const std::string& name);
