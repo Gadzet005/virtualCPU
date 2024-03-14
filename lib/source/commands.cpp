@@ -143,14 +143,14 @@ void JumpLE::execute(Processor& proc) {
 }
 
 void Call::execute(Processor& proc) {
-    int calledFrom = proc.getCurProgram().getCurIdx();
+    size_t calledFrom = proc.getCurProgram().getCurIdx();
     proc.getStack().pushFunction(calledFrom);
     proc.getCurProgram().jumpToLabel(label);
 }
 
 void Ret::execute(Processor& proc) {
     try {
-        int calledFrom = proc.getStack().popFunction();
+        size_t calledFrom = proc.getStack().popFunction();
         proc.getCurProgram().jumpToIdx(calledFrom);
     } catch (const EmptyStackError& e) {
         throw CommandRuntimeError("Вызов команды ret без вызова команды call");

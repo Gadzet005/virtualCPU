@@ -9,11 +9,11 @@ void toLower(std::string& str) {
 bool Parser::validateCommandArg(const std::string& arg, Command::ArgType type) {
     switch (type) {
         case Command::ArgType::Number:
-            return std::regex_match(arg, NUMBER);
+            return std::regex_match(arg, TOKENS.at("Number"));
         case Command::ArgType::Reg:
-            return std::regex_match(arg, REG);
+            return std::regex_match(arg, TOKENS.at("Reg"));
         case Command::ArgType::Label:
-            return std::regex_match(arg, LABEL_NAME);
+            return std::regex_match(arg, TOKENS.at("LabelName"));
     }
     return false;
 }
@@ -38,9 +38,9 @@ Program Parser::parseProgram(const std::string& path) {
         std::smatch result;
         if (token.empty() || token.starts_with("//")) {
             continue;
-        } else if (std::regex_match(token, result, LABEL)) {
+        } else if (std::regex_match(token, result, TOKENS.at("Label"))) {
             program.addLabel(result[1]);
-        } else if (std::regex_match(token, result, COMMAND)) {
+        } else if (std::regex_match(token, result, TOKENS.at("Command"))) {
             toLower(token);
             Command* command = createCommandByName(token);
             if (command == nullptr) {

@@ -29,7 +29,6 @@ public:
 
         delete[] data;
         data = newData;
-
         capacity = other.capacity;
         size = other.size;
 
@@ -58,8 +57,7 @@ public:
         if (size == 0) {
             throw EmptyStackError("Вызов метода pop на пустом стэке");
         }
-        size--;
-        return data[size];
+        return data[--size];
     }
 
     T& top() const {
@@ -98,7 +96,6 @@ private:
     size_t size = 0;
     size_t capacity = 0;
 
-    // Расширяет массив как минимум до newCapacity и копирует данные из toCopy (можно из самого себя)
     void resize() {
         size_t newCapacity = std::max(capacity * CAPACITY_COEF, START_CAPACITY);
         T* newData = new T[newCapacity];

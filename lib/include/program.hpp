@@ -4,7 +4,6 @@
 #include <memory>
 #include <string>
 #include "commands.hpp"
-#include "exceptions.hpp"
 
 namespace vm {
 

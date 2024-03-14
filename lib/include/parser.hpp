@@ -12,15 +12,13 @@ namespace Parser {
     Program parseProgram(const std::string& path);
     bool validateCommandArg(const std::string& arg, Command::ArgType type);
 
-    // Команды. Обязательно начинается с буквы, затем могут идти буквы или цифры
-    const std::regex COMMAND = std::regex(R"([a-z]\w*)", std::regex::icase);
-    // Метки. По аналогии с командами
-    const std::regex LABEL = std::regex(R"(([a-z]\w*):)", std::regex::icase);
-    const std::regex LABEL_NAME = std::regex(R"([a-z]\w*)", std::regex::icase);
-    // Числа
-    const std::regex NUMBER = std::regex(R"(-?\d+)");
-    // Регистры
-    const std::regex REG = std::regex(R"([a-z]+)", std::regex::icase);
+    const std::map<std::string, std::regex> TOKENS = {
+        {"Command", std::regex(R"([a-z]\w*)", std::regex::icase)},
+        {"Label", std::regex(R"(([a-z]\w*):)", std::regex::icase)},
+        {"LabelName", std::regex(R"([a-z]\w*)", std::regex::icase)},
+        {"Reg", std::regex(R"([a-z]+)", std::regex::icase)},
+        {"Number", std::regex(R"(-?\d+)")},
+    };
 };
 
 }

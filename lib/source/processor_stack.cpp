@@ -7,7 +7,7 @@ void ProcessorStack::pushValue(int value) {
     push(toPush);
 }
 
-void ProcessorStack::pushFunction(int calledFrom) {
+void ProcessorStack::pushFunction(size_t calledFrom) {
     auto toPush = std::shared_ptr<StackEntity>(new StackFunction(calledFrom));
     push(toPush);
 }

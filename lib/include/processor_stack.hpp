@@ -25,11 +25,11 @@ private:
 
 class StackFunction : public StackEntity {
 public:
-    StackFunction(int idx) : calledFrom(idx) {}
+    StackFunction(size_t idx) : calledFrom(idx) {}
     StackEntity::Type getType() const override { return StackEntity::Type::Function; }
-    int getCalledFrom() const { return calledFrom; }
+    size_t getCalledFrom() const { return calledFrom; }
 private:
-    int calledFrom = 0;
+    size_t calledFrom;
 };
 
 class ProcessorStack : private Stack<std::shared_ptr<StackEntity>> {
@@ -37,7 +37,7 @@ public:
     ProcessorStack() = default;
 
     void pushValue(int value);
-    void pushFunction(int calledFrom);
+    void pushFunction(size_t calledFrom);
     int popValue();
     size_t popFunction();
 
