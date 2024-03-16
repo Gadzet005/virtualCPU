@@ -1,12 +1,15 @@
 #include "commands.hpp"
 #include "processor.hpp"
 
-#define ADD_COMMAND(objName, obj) if (name == objName) return new obj();
-
 namespace vm {
 
 // Соответствие имени команды с самой командой
-Command* createCommandByName(const std::string& name) {
+Command* createCommandByName(std::string name) {
+    // lowercase
+    std::transform(name.begin(), name.end(), name.begin(), [](char c){ return std::tolower(c); });
+
+    #define ADD_COMMAND(objName, obj) if (name == objName) return new obj();
+
     ADD_COMMAND("begin", Begin);
     ADD_COMMAND("end", End);
     ADD_COMMAND("in", In);
@@ -29,8 +32,9 @@ Command* createCommandByName(const std::string& name) {
     ADD_COMMAND("call", Call);
     ADD_COMMAND("ret", Ret);
     return nullptr;
-}
 
+    #undef ADD_COMMAND
+}
 
 void In::execute(Processor& proc) {
     int value;

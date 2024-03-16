@@ -17,3 +17,4 @@ end
 print:
     pushr n
     out
+    ret

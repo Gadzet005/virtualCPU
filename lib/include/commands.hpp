@@ -24,7 +24,7 @@ public:
     virtual ~Command() = default;
 };
 
-Command* createCommandByName(const std::string& name);
+Command* createCommandByName(std::string name);
 
 class Begin : public Command {
 public:

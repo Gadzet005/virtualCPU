@@ -16,7 +16,7 @@ void Program::compile() {
         Command* cmd = commands[i].get();
         if (typeid(*cmd) == typeid(Begin)) {
             if (startFound) {
-                throw MultipleUseError("Допускается только одна команда begin");
+                throw ProgramError("Допускается только одна команда begin");
             }
             startIdx = i;
             startFound = true;
@@ -26,7 +26,7 @@ void Program::compile() {
                 throw ProgramError("Команда end до команды begin");
             }
             if (endFound) {
-                throw MultipleUseError("Допускается только одна команда end");
+                throw ProgramError("Допускается только одна команда end");
             }
             endFound = true;
         }
@@ -47,7 +47,7 @@ void Program::addCommand(Command* cmd) {
 
 void Program::addLabel(const std::string& label) {
     if (labels.find(label) != labels.end()) {
-        throw MultipleUseError("Повторное использование метки " + label);
+        throw ProgramError("Повторное использование метки " + label);
     }
     labels[label] = commands.size();
 }
@@ -75,6 +75,17 @@ void Program::jumpToIdx(size_t idx) {
         throw ProgramError("Невозможно прыгнуть по индексу: " + std::to_string(idx));
     }
     currentIdx = idx;
+}
+
+void Program::save(const std::string& path) const {
+    std::ofstream file(path);
+    file.open(path);
+    file << 1;
+}
+
+Program Program::load(const std::string& path) {
+    Program program;
+    return program;
 }
 
 }

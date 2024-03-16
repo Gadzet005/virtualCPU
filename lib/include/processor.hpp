@@ -10,8 +10,7 @@ namespace vm {
 class Processor {
 public:
     Processor() = default;
-    Processor(std::istream& input, std::ostream& output) : 
-        in(input), out(output) {};
+    Processor(std::istream& input, std::ostream& output) : in(input), out(output) {};
 
     std::istream& getInput() const { return in; }
     std::ostream& getOutput() const { return out; }

@@ -3,6 +3,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <fstream>
 #include "commands.hpp"
 
 namespace vm {
@@ -19,6 +20,9 @@ public:
     void compile();
     bool isCompiled() const { return compiled; }
     size_t getCurIdx() const { return currentIdx; }
+
+    void save(const std::string& path) const;
+    static Program load(const std::string& path);
 
 private:
     std::vector<std::unique_ptr<Command>> commands;

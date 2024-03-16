@@ -23,11 +23,6 @@ public:
     ) {}
 };
 
-class MultipleUseError : public BaseError {
-public:
-    MultipleUseError(const std::string& message) : BaseError(message) {}
-};
-
 class ProgramError : public BaseError {
 public:
     ProgramError(const std::string& message) : BaseError(message) {};

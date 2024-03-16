@@ -2,10 +2,6 @@
 
 namespace vm {
 
-void toLower(std::string& str) {
-    std::transform(str.begin(), str.end(), str.begin(), [](char c){ return std::tolower(c); });
-}
-
 bool Parser::validateCommandArg(const std::string& arg, Command::ArgType type) {
     switch (type) {
         case Command::ArgType::Number:
@@ -41,9 +37,8 @@ Program Parser::parseProgram(const std::string& path) {
         } else if (std::regex_match(token, result, TOKENS.at("Label"))) {
             program.addLabel(result[1]);
         } else if (std::regex_match(token, result, TOKENS.at("Command"))) {
-            toLower(token);
             Command* command = createCommandByName(token);
-            if (command == nullptr) {
+            if (!command) {
                 throw ParseError(std::string("Неизвестная команда: ") + token, lineIdx);
             }
             
@@ -75,6 +70,8 @@ Program Parser::parseProgram(const std::string& path) {
             throw ParseError("Ошибка синтаксиса", lineIdx);
         }
     }
+
+    program.compile();
     
     return program;
 }
