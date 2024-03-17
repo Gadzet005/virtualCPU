@@ -36,51 +36,51 @@ Command* createCommandByName(std::string name) {
     #undef ADD_COMMAND
 }
 
-void In::execute(Processor& proc) {
-    int value;
+void In::execute(Processor& proc, ProgramExecutor& executor) {
+    long long value;
     proc.getInput() >> value;
     proc.getStack().pushValue(value);
 }
 
-void Out::execute(Processor& proc) {
+void Out::execute(Processor& proc, ProgramExecutor& executor) {
     proc.getOutput() << proc.getStack().popValue() << std::endl;
 }
 
 
-void Add::execute(Processor& proc) {
-    int a = proc.getStack().popValue();
-    int b = proc.getStack().popValue();
+void Add::execute(Processor& proc, ProgramExecutor& executor) {
+    long long a = proc.getStack().popValue();
+    long long b = proc.getStack().popValue();
     proc.getStack().pushValue(a + b);
 }
 
-void Sub::execute(Processor& proc) {
-    int a = proc.getStack().popValue();
-    int b = proc.getStack().popValue();
+void Sub::execute(Processor& proc, ProgramExecutor& executor) {
+    long long a = proc.getStack().popValue();
+    long long b = proc.getStack().popValue();
     proc.getStack().pushValue(b - a);
 }
 
-void Mul::execute(Processor& proc) {
-    int a = proc.getStack().popValue();
-    int b = proc.getStack().popValue();
+void Mul::execute(Processor& proc, ProgramExecutor& executor) {
+    long long a = proc.getStack().popValue();
+    long long b = proc.getStack().popValue();
     proc.getStack().pushValue(a * b);
 }
 
-void Div::execute(Processor& proc) {
-    int a = proc.getStack().popValue();
-    int b = proc.getStack().popValue();
+void Div::execute(Processor& proc, ProgramExecutor& executor) {
+    long long a = proc.getStack().popValue();
+    long long b = proc.getStack().popValue();
     proc.getStack().pushValue(b / a);
 }
 
 
-void Pop::execute(Processor& proc) {
+void Pop::execute(Processor& proc, ProgramExecutor& executor) {
     proc.getStack().popValue();
 }
 
 void Push::setArgs(const std::vector<std::string>& args) {
-    value = std::stoi(args[0]);
+    value = std::stoll(args[0]);
 }
 
-void Push::execute(Processor& proc) {
+void Push::execute(Processor& proc, ProgramExecutor& executor) {
     proc.getStack().pushValue(value);
 }
 
@@ -89,16 +89,16 @@ void Pushr::setArgs(const std::vector<std::string>& args) {
     reg = args[0];
 }
 
-void Pushr::execute(Processor& proc) {
+void Pushr::execute(Processor& proc, ProgramExecutor& executor) {
     try {
-        int value = proc.getRegister(reg);
+        long long value = proc.getRegister(reg);
         proc.getStack().pushValue(value);
     } catch (const std::out_of_range& e) {
         throw CommandRuntimeError("Обращение к несуществующему регистру");
     }
 }
 
-void Popr::execute(Processor& proc) {
+void Popr::execute(Processor& proc, ProgramExecutor& executor) {
     proc.setRegister(reg, proc.getStack().popValue());
 }
 
@@ -107,55 +107,55 @@ void Jump::setArgs(const std::vector<std::string>& args) {
     label = args[0];
 }
 
-void Jump::execute(Processor& proc) {
-    proc.getCurProgram().jumpToLabel(label);
+void Jump::execute(Processor& proc, ProgramExecutor& executor) {
+    executor.jumpToLabel(label);
 }
 
-void JumpEQ::execute(Processor& proc) {
+void JumpEQ::execute(Processor& proc, ProgramExecutor& executor) {
     if (proc.getStack().popValue() == proc.getStack().popValue()) {
-        proc.getCurProgram().jumpToLabel(label);
+        executor.jumpToLabel(label);
     }
 }
 
-void JumpNEQ::execute(Processor& proc) {
+void JumpNEQ::execute(Processor& proc, ProgramExecutor& executor) {
     if (proc.getStack().popValue() != proc.getStack().popValue()) {
-        proc.getCurProgram().jumpToLabel(label);
+        executor.jumpToLabel(label);
     }
 }
-void JumpG::execute(Processor& proc) {
+void JumpG::execute(Processor& proc, ProgramExecutor& executor) {
     if (proc.getStack().popValue() > proc.getStack().popValue()) {
-        proc.getCurProgram().jumpToLabel(label);
+        executor.jumpToLabel(label);
     }
 }
 
-void JumpGE::execute(Processor& proc) {
+void JumpGE::execute(Processor& proc, ProgramExecutor& executor) {
     if (proc.getStack().popValue() >= proc.getStack().popValue()) {
-        proc.getCurProgram().jumpToLabel(label);
+        executor.jumpToLabel(label);
     }
 }
 
-void JumpL::execute(Processor& proc) {
+void JumpL::execute(Processor& proc, ProgramExecutor& executor) {
     if (proc.getStack().popValue() < proc.getStack().popValue()) {
-        proc.getCurProgram().jumpToLabel(label);
+        executor.jumpToLabel(label);
     }
 }
 
-void JumpLE::execute(Processor& proc) {
+void JumpLE::execute(Processor& proc, ProgramExecutor& executor) {
     if (proc.getStack().popValue() <= proc.getStack().popValue()) {
-        proc.getCurProgram().jumpToLabel(label);
+        executor.jumpToLabel(label);
     }
 }
 
-void Call::execute(Processor& proc) {
-    size_t calledFrom = proc.getCurProgram().getCurIdx();
+void Call::execute(Processor& proc, ProgramExecutor& executor) {
+    size_t calledFrom = executor.getCurrentIdx();
     proc.getStack().pushFunction(calledFrom);
-    proc.getCurProgram().jumpToLabel(label);
+    executor.jumpToLabel(label);
 }
 
-void Ret::execute(Processor& proc) {
+void Ret::execute(Processor& proc, ProgramExecutor& executor) {
     try {
         size_t calledFrom = proc.getStack().popFunction();
-        proc.getCurProgram().jumpToIdx(calledFrom);
+        executor.jumpToIdx(calledFrom);
     } catch (const EmptyStackError& e) {
         throw CommandRuntimeError("Вызов команды ret без вызова команды call");
     }

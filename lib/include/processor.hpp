@@ -16,21 +16,18 @@ public:
     std::ostream& getOutput() const { return out; }
     ProcessorStack& getStack() { return stack; }
 
-    void setRegister(const std::string& name, int value) { registers[name] = value; }
-    int getRegister(const std::string& name) const { return registers.at(name); }
+    void setRegister(const std::string& name, long long value) { registers[name] = value; }
+    long long getRegister(const std::string& name) const { return registers.at(name); }
 
     void executeProgram(Program& program);
-    Program& getCurProgram() const { return *curProgram; }
 
     void clear();
 
 private:
     ProcessorStack stack;
-    std::map<std::string, int> registers;
+    std::map<std::string, long long> registers;
     std::istream& in = std::cin;
     std::ostream& out = std::cout;
-
-    Program* curProgram = nullptr;
 };
 
 }

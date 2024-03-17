@@ -11,27 +11,38 @@ namespace vm {
 class Program {
 public:
     void addCommand(Command* cmd);
-    Command* getCurCommand();
-
     void addLabel(const std::string& label);
-    void jumpToLabel(const std::string& label);
-    void jumpToIdx(size_t idx);
-
+    
     void compile();
-    bool isCompiled() const { return compiled; }
-    size_t getCurIdx() const { return currentIdx; }
+    size_t findStart() const;
 
     void save(const std::string& path) const;
     static Program load(const std::string& path);
 
+    friend class ProgramExecutor;
+
 private:
     std::vector<std::unique_ptr<Command>> commands;
-    std::map<std::string, int> labels;
+    std::map<std::string, size_t> labels;
+};
 
-    size_t beginIdx = 0;
-    size_t currentIdx = 0;
+class ProgramExecutor {
+public:
+    ProgramExecutor(Program& program) : 
+        prog(program), currentIdx(prog.findStart()) {};
 
-    bool compiled = false;
+    bool finished() const;
+    Command& getCurComand() const;
+    void toNextCommand();
+
+    void jumpToLabel(const std::string& label);
+    void jumpToIdx(size_t idx) { currentIdx = idx; };
+
+    size_t getCurrentIdx() const;
+
+private:
+    Program& prog;
+    size_t currentIdx;
 };
 
 }

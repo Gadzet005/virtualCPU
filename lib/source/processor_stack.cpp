@@ -2,7 +2,7 @@
 
 namespace vm {
 
-void ProcessorStack::pushValue(int value) {
+void ProcessorStack::pushValue(long long value) {
     auto toPush = std::shared_ptr<StackEntity>(new StackNumber(value));
     push(toPush);
 }
@@ -12,7 +12,7 @@ void ProcessorStack::pushFunction(size_t calledFrom) {
     push(toPush);
 }
 
-int ProcessorStack::popValue() {
+long long ProcessorStack::popValue() {
     StackEntity* toPop = pop().get();
     if (toPop->getType() == StackEntity::Type::Number) {
         return static_cast<StackNumber*>(toPop)->getValue();

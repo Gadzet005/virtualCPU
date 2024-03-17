@@ -72,7 +72,6 @@ Program Parser::parseProgram(const std::string& path) {
     }
 
     program.compile();
-    
     return program;
 }
 

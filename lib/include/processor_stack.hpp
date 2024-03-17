@@ -16,11 +16,11 @@ public:
 
 class StackNumber : public StackEntity {
 public:
-    StackNumber(int val) : value(val) {}
+    StackNumber(long long val) : value(val) {}
     StackEntity::Type getType() const override { return StackEntity::Type::Number; }
-    int getValue() const { return value; }
+    long long getValue() const { return value; }
 private:
-    int value;
+    long long value;
 };
 
 class StackFunction : public StackEntity {
@@ -36,9 +36,9 @@ class ProcessorStack : private Stack<std::shared_ptr<StackEntity>> {
 public:
     ProcessorStack() = default;
 
-    void pushValue(int value);
+    void pushValue(long long value);
     void pushFunction(size_t calledFrom);
-    int popValue();
+    long long popValue();
     size_t popFunction();
 
     void clear() { Stack<std::shared_ptr<StackEntity>>::clear(); }

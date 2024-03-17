@@ -3,14 +3,12 @@
 namespace vm {
     
 void Processor::executeProgram(Program& program) {
-    program.compile();
-    curProgram = &program;
-    Command* cur = program.getCurCommand();
-    while (cur != nullptr) {
-        cur->execute(*this);
-        cur = program.getCurCommand();
+    ProgramExecutor executor(program);
+    while (!executor.finished()) {
+        Command& cur = executor.getCurComand();
+        executor.toNextCommand();
+        cur.execute(*this, executor);
     }
-    curProgram = nullptr;
 }
 
 void Processor::clear() {

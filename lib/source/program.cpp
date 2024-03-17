@@ -3,25 +3,20 @@
 namespace vm {
 
 void Program::compile() {
-    if (isCompiled()) {
-        currentIdx = beginIdx;
-        return;
-    }
-
-    size_t startIdx = 0;
     bool startFound = false;
     bool endFound = false;
 
     for (int i = 0; i < commands.size(); i++) {
-        Command* cmd = commands[i].get();
-        if (typeid(*cmd) == typeid(Begin)) {
+        Command& cmd = *commands[i];
+
+        if (typeid(cmd) == typeid(Begin)) {
             if (startFound) {
                 throw ProgramError("Допускается только одна команда begin");
             }
-            startIdx = i;
             startFound = true;
         }
-        if (typeid(*cmd) == typeid(End)) {
+
+        if (typeid(cmd) == typeid(End)) {
             if (!startFound) {
                 throw ProgramError("Команда end до команды begin");
             }
@@ -30,15 +25,24 @@ void Program::compile() {
             }
             endFound = true;
         }
+
+        if (startFound && endFound) {
+            break;
+        }
     }
 
     if (!startFound || !endFound) {
         throw ProgramError("Команда begin или end не найдены");
     }
+}
 
-    currentIdx = startIdx;
-    beginIdx = startIdx;
-    compiled = true;
+size_t Program::findStart() const {
+    for (size_t i = 0; i < commands.size(); i++) {
+        if (typeid(*commands[i]) == typeid(Begin)) {
+            return i;
+        }
+    }
+    return commands.size();
 }
 
 void Program::addCommand(Command* cmd) {
@@ -52,40 +56,44 @@ void Program::addLabel(const std::string& label) {
     labels[label] = commands.size();
 }
 
-Command* Program::getCurCommand() {
-    if (currentIdx >= commands.size()) {
-        return nullptr;
-    }
-    Command* cur = commands.at(currentIdx++).get();
-    if (typeid(*cur) == typeid(End)) {
-        return nullptr;
-    }
-    return cur;
-}
-
-void Program::jumpToLabel(const std::string& label) {
-    if (labels.find(label) == labels.end()) {
-        throw ProgramError("Метка " + label + " не найдена");
-    }
-    currentIdx = labels[label];
-}
-
-void Program::jumpToIdx(size_t idx) {
-    if (idx > commands.size()) {
-        throw ProgramError("Невозможно прыгнуть по индексу: " + std::to_string(idx));
-    }
-    currentIdx = idx;
-}
-
 void Program::save(const std::string& path) const {
-    std::ofstream file(path);
-    file.open(path);
-    file << 1;
+    std::ofstream file(path, std::ios::binary);
+    std::string line = "hello world";
+    file.write(line.data(), line.size());
 }
 
 Program Program::load(const std::string& path) {
     Program program;
     return program;
+}
+
+
+bool ProgramExecutor::finished() const {
+    return currentIdx >= prog.commands.size();
+}
+
+Command& ProgramExecutor::getCurComand() const {
+    return *prog.commands.at(currentIdx);
+}
+
+void ProgramExecutor::toNextCommand() {
+    if (typeid(getCurComand()) == typeid(End)) {
+        currentIdx = prog.commands.size();
+    } else {
+        currentIdx++;
+    }
+}
+
+void ProgramExecutor::jumpToLabel(const std::string& label) {
+    try {
+        jumpToIdx(prog.labels.at(label));
+    } catch (const std::out_of_range&) {
+        throw ProgramError("Метка " + label + " не найдена");
+    }
+}
+
+size_t ProgramExecutor::getCurrentIdx() const {
+    return std::min(currentIdx, prog.commands.size());
 }
 
 }
