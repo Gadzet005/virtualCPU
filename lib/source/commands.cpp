@@ -8,29 +8,29 @@ std::shared_ptr<Command> createCommandByName(std::string name) {
     // lowercase
     std::transform(name.begin(), name.end(), name.begin(), [](char c){ return std::tolower(c); });
 
-    #define ADD_COMMAND(objName, obj) if (name == objName) return std::make_shared<obj>();
+    #define ADD_COMMAND(cmd) if (cmd::name == name) return std::make_shared<cmd>();
 
-    ADD_COMMAND("begin", Begin);
-    ADD_COMMAND("end", End);
-    ADD_COMMAND("in", In);
-    ADD_COMMAND("out", Out);
-    ADD_COMMAND("add", Add);
-    ADD_COMMAND("sub", Sub);
-    ADD_COMMAND("mul", Mul);
-    ADD_COMMAND("div", Div);
-    ADD_COMMAND("pop", Pop);
-    ADD_COMMAND("push", Push);
-    ADD_COMMAND("pushr", Pushr);
-    ADD_COMMAND("popr", Popr);
-    ADD_COMMAND("jmp", Jump);
-    ADD_COMMAND("jeq", JumpEQ);
-    ADD_COMMAND("jne", JumpNEQ);
-    ADD_COMMAND("ja", JumpG);
-    ADD_COMMAND("jae", JumpGE);
-    ADD_COMMAND("jb", JumpL);
-    ADD_COMMAND("jbe", JumpLE);
-    ADD_COMMAND("call", Call);
-    ADD_COMMAND("ret", Ret);
+    ADD_COMMAND(Begin);
+    ADD_COMMAND(End);
+    ADD_COMMAND(In);
+    ADD_COMMAND(Out);
+    ADD_COMMAND(Add);
+    ADD_COMMAND(Sub);
+    ADD_COMMAND(Mul);
+    ADD_COMMAND(Div);
+    ADD_COMMAND(Pop);
+    ADD_COMMAND(Push);
+    ADD_COMMAND(Pushr);
+    ADD_COMMAND(Popr);
+    ADD_COMMAND(Jump);
+    ADD_COMMAND(JumpEQ);
+    ADD_COMMAND(JumpNEQ);
+    ADD_COMMAND(JumpG);
+    ADD_COMMAND(JumpGE);
+    ADD_COMMAND(JumpL);
+    ADD_COMMAND(JumpLE);
+    ADD_COMMAND(Call);
+    ADD_COMMAND(Ret);
     return nullptr;
 
     #undef ADD_COMMAND

@@ -14,7 +14,14 @@ file(COPY data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 # bin
 add_executable(Main bin/main.cpp)
 target_link_libraries(Main Source)
-include_directories(Main PRIVATE lib/include)
+
+add_executable(Compile bin/compile.cpp)
+target_link_libraries(Compile Source)
+
+add_executable(Run bin/run.cpp)
+target_link_libraries(Run Source)
+
+include_directories(lib/include)
 
 # Покрытие тестов
 if(ENABLE_COVERAGE)

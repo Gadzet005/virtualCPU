@@ -63,13 +63,57 @@ void Program::addLabel(const std::string& label) {
 
 void Program::save(const std::string& path) const {
     std::ofstream file(path, std::ios::binary);
-    std::string line = "hello world";
-    file.write(line.data(), line.size());
+    if (!file.is_open()) {
+        throw ProgramError("Не удалось открыть файл: " + path);
+    }
+    
+    file << commands.size() << " ";
+    for (auto& command : commands) {
+        command->save(file);
+        file << " ";
+    }
+
+    file << labels.size() << " ";
+    for (auto& [name, idx] : labels) {
+        file << name << " " << idx << " ";
+    }
 }
 
 Program Program::load(const std::string& path) {
+    std::ifstream file(path, std::ios::binary);
+    if (!file.is_open()) {
+        throw ProgramError("Не удалось открыть файл: " + path);
+    }
+
     Program program;
-    return std::move(program);
+    size_t commandsSize;
+    file >> commandsSize;
+    for (size_t i = 0; i < commandsSize; i++) {
+        std::string name;
+        file >> name;
+
+        auto cmd = createCommandByName(name);
+        size_t argSize = cmd->getArgTypes().size();
+        std::vector<std::string> args;
+        for (size_t j = 0; j < argSize; j++) {
+            std::string arg;
+            file >> arg;
+            args.push_back(arg);
+        }
+        cmd->setArgs(args);
+        program.addCommand(std::move(cmd));
+    }
+
+    size_t labelsSize;
+    file >> labelsSize;
+    for (size_t i = 0; i < labelsSize; i++) {
+        std::string name;
+        size_t idx;
+        file >> name >> idx;
+        program.labels[name] = idx;
+    }
+
+    return program;
 }
 
 
