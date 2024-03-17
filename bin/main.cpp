@@ -13,7 +13,6 @@ int main(int argc, char *argv[]) {
 
     Processor processor;
     Program program = Parser::parseProgram(path);
-    program.save("program.bin");
     processor.executeProgram(program);
 
     return 0;

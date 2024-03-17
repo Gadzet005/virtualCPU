@@ -37,7 +37,7 @@ Program Parser::parseProgram(const std::string& path) {
         } else if (std::regex_match(token, result, TOKENS.at("Label"))) {
             program.addLabel(result[1]);
         } else if (std::regex_match(token, result, TOKENS.at("Command"))) {
-            Command* command = createCommandByName(token);
+            auto command = createCommandByName(token);
             if (!command) {
                 throw ParseError(std::string("Неизвестная команда: ") + token, lineIdx);
             }
@@ -58,7 +58,7 @@ Program Parser::parseProgram(const std::string& path) {
             }
 
             command->setArgs(args);
-            program.addCommand(command);
+            program.addCommand(std::move(command));
         } else {
             throw ParseError("Ошибка синтаксиса", lineIdx);
         }

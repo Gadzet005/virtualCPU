@@ -10,6 +10,7 @@ namespace vm {
 
 class Program {
 public:
+    void addCommand(std::shared_ptr<Command>&& cmd);
     void addCommand(Command* cmd);
     void addLabel(const std::string& label);
     
@@ -22,7 +23,7 @@ public:
     friend class ProgramExecutor;
 
 private:
-    std::vector<std::unique_ptr<Command>> commands;
+    std::vector<std::shared_ptr<Command>> commands;
     std::map<std::string, size_t> labels;
 };
 

@@ -4,11 +4,11 @@
 namespace vm {
 
 // Соответствие имени команды с самой командой
-Command* createCommandByName(std::string name) {
+std::shared_ptr<Command> createCommandByName(std::string name) {
     // lowercase
     std::transform(name.begin(), name.end(), name.begin(), [](char c){ return std::tolower(c); });
 
-    #define ADD_COMMAND(objName, obj) if (name == objName) return new obj();
+    #define ADD_COMMAND(objName, obj) if (name == objName) return std::make_shared<obj>();
 
     ADD_COMMAND("begin", Begin);
     ADD_COMMAND("end", End);

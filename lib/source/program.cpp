@@ -45,8 +45,13 @@ size_t Program::findStart() const {
     return commands.size();
 }
 
+void Program::addCommand(std::shared_ptr<Command>&& command) {
+    commands.push_back(std::move(command));
+}
+
 void Program::addCommand(Command* cmd) {
-    commands.push_back(std::unique_ptr<Command>(cmd));
+    auto ptr = std::shared_ptr<Command>(cmd);
+    addCommand(std::move(ptr));
 }
 
 void Program::addLabel(const std::string& label) {
@@ -64,7 +69,7 @@ void Program::save(const std::string& path) const {
 
 Program Program::load(const std::string& path) {
     Program program;
-    return program;
+    return std::move(program);
 }
 
 

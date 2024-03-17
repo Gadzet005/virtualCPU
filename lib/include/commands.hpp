@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <memory>
 #include "exceptions.hpp"
 
 namespace vm {
@@ -25,7 +26,7 @@ public:
     virtual ~Command() = default;
 };
 
-Command* createCommandByName(std::string name);
+std::shared_ptr<Command> createCommandByName(std::string name);
 
 class Begin : public Command {
 public:
