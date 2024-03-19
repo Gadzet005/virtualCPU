@@ -3,38 +3,64 @@
 
 namespace vm {
 
-// Соответствие имени команды с самой командой
+const std::map<std::string, CommandType> nameToType {
+    {"begin", CommandType::Begin},
+    {"end", CommandType::End},
+    {"in", CommandType::In},
+    {"out", CommandType::Out},
+    {"add", CommandType::Add},
+    {"sub", CommandType::Sub},
+    {"mul", CommandType::Mul},
+    {"div", CommandType::Div},
+    {"push", CommandType::Push},
+    {"pop", CommandType::Pop},
+    {"pushr", CommandType::Pushr},
+    {"popr", CommandType::Popr},
+    {"jmp", CommandType::Jump},
+    {"jeq", CommandType::JumpEQ},
+    {"jne", CommandType::JumpNEQ},
+    {"ja", CommandType::JumpG},
+    {"jae", CommandType::JumpGE},
+    {"jb", CommandType::JumpL},
+    {"jbe", CommandType::JumpLE},
+    {"call", CommandType::Call},
+    {"ret", CommandType::Ret},
+};
+
+std::shared_ptr<Command> createCommandByType(CommandType type) {
+    switch (type) {
+        case CommandType::Begin:    return std::make_shared<Begin>();
+        case CommandType::End:      return std::make_shared<End>();
+        case CommandType::In:       return std::make_shared<In>();
+        case CommandType::Out:      return std::make_shared<Out>();
+        case CommandType::Add:      return std::make_shared<Add>();
+        case CommandType::Sub:      return std::make_shared<Sub>();
+        case CommandType::Mul:      return std::make_shared<Mul>();
+        case CommandType::Div:      return std::make_shared<Div>();
+        case CommandType::Push:     return std::make_shared<Push>();
+        case CommandType::Pop:      return std::make_shared<Pop>();
+        case CommandType::Pushr:    return std::make_shared<Pushr>();
+        case CommandType::Popr:     return std::make_shared<Popr>();
+        case CommandType::Jump:     return std::make_shared<Jump>();
+        case CommandType::JumpEQ:   return std::make_shared<JumpEQ>();
+        case CommandType::JumpNEQ:  return std::make_shared<JumpNEQ>();
+        case CommandType::JumpG:    return std::make_shared<JumpG>();
+        case CommandType::JumpGE:   return std::make_shared<JumpGE>();
+        case CommandType::JumpL:    return std::make_shared<JumpL>();
+        case CommandType::JumpLE:   return std::make_shared<JumpLE>();
+        case CommandType::Call:     return std::make_shared<Call>();
+        case CommandType::Ret:      return std::make_shared<Ret>();
+        default:                    return nullptr;
+    }
+}
+
 std::shared_ptr<Command> createCommandByName(std::string name) {
     // lowercase
     std::transform(name.begin(), name.end(), name.begin(), [](char c){ return std::tolower(c); });
-
-    #define ADD_COMMAND(cmd) if (cmd::name == name) return std::make_shared<cmd>();
-
-    ADD_COMMAND(Begin);
-    ADD_COMMAND(End);
-    ADD_COMMAND(In);
-    ADD_COMMAND(Out);
-    ADD_COMMAND(Add);
-    ADD_COMMAND(Sub);
-    ADD_COMMAND(Mul);
-    ADD_COMMAND(Div);
-    ADD_COMMAND(Pop);
-    ADD_COMMAND(Push);
-    ADD_COMMAND(Pushr);
-    ADD_COMMAND(Popr);
-    ADD_COMMAND(Jump);
-    ADD_COMMAND(JumpEQ);
-    ADD_COMMAND(JumpNEQ);
-    ADD_COMMAND(JumpG);
-    ADD_COMMAND(JumpGE);
-    ADD_COMMAND(JumpL);
-    ADD_COMMAND(JumpLE);
-    ADD_COMMAND(Call);
-    ADD_COMMAND(Ret);
-    return nullptr;
-
-    #undef ADD_COMMAND
+    CommandType type = nameToType.at(name);
+    return createCommandByType(type);
 }
+
 
 void In::execute(Processor& proc, ProgramExecutor& executor) {
     long long value;

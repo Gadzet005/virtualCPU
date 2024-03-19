@@ -5,7 +5,7 @@
 
 namespace vm {
 
-template<class T = int>
+template<class T>
 class Stack {
 public:
     Stack() = default;
@@ -44,13 +44,10 @@ public:
         delete[] data;
     }
 
-    void push(const T& elem) {
+    template<typename A>
+    void push(A&& elem) {
         if (size == capacity) resize();
-        data[size++] = elem;
-    }
-
-    void push(T&& elem) {
-        push(elem);
+        data[size++] = std::forward<A>(elem);
     }
 
     T pop() {

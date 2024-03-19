@@ -2,21 +2,19 @@
 
 namespace vm {
 
-void Program::compile() {
+void Program::compile() const {
     bool startFound = false;
     bool endFound = false;
 
-    for (int i = 0; i < commands.size(); i++) {
-        Command& cmd = *commands[i];
-
-        if (typeid(cmd) == typeid(Begin)) {
+    for (const auto& command : commands) {
+        if (typeid(*command) == typeid(Begin)) {
             if (startFound) {
                 throw ProgramError("Допускается только одна команда begin");
             }
             startFound = true;
         }
 
-        if (typeid(cmd) == typeid(End)) {
+        if (typeid(*command) == typeid(End)) {
             if (!startFound) {
                 throw ProgramError("Команда end до команды begin");
             }
@@ -89,18 +87,11 @@ Program Program::load(const std::string& path) {
     size_t commandsSize;
     file >> commandsSize;
     for (size_t i = 0; i < commandsSize; i++) {
-        std::string name;
-        file >> name;
+        int type;
+        file >> type;
 
-        auto cmd = createCommandByName(name);
-        size_t argSize = cmd->getArgTypes().size();
-        std::vector<std::string> args;
-        for (size_t j = 0; j < argSize; j++) {
-            std::string arg;
-            file >> arg;
-            args.push_back(arg);
-        }
-        cmd->setArgs(args);
+        auto cmd = createCommandByType(static_cast<CommandType>(type));
+        cmd->load(file);
         program.addCommand(std::move(cmd));
     }
 

@@ -4,6 +4,7 @@
 #include <memory>
 #include <string_view>
 #include <fstream>
+#include <map>
 #include "exceptions.hpp"
 
 namespace vm {
@@ -12,98 +13,125 @@ namespace vm {
 class Processor;
 class ProgramExecutor;
 
+
+enum class CommandType {
+    Begin, End, In, Out, Add, Sub, Mul, Div, Push, Pop, Pushr, Popr,
+    Jump, JumpEQ, JumpNEQ, JumpG, JumpGE, JumpL, JumpLE, Call, Ret
+};
+
 class Command {
 public:
     enum class ArgType {
         Number, Reg, Label
     };
 
+    // Тип команды
+    virtual CommandType getType() const = 0;
+
     // Выполнение команды
     virtual void execute(Processor& proc, ProgramExecutor& executor) = 0;
+
     // Передача аргументов в команду
     virtual void setArgs(const std::vector<std::string>& args) {}
     // Получить типы аргументов команды
     virtual std::vector<ArgType> getArgTypes() const { return {}; }
+
     // Сохранить команду
-    virtual void save(std::ofstream& file) const = 0;
+    virtual void save(std::ofstream& file) const { file << static_cast<int>(getType()); }
+    // Загрузить команду
+    virtual void load(std::ifstream& file) {}
 
     virtual ~Command() = default;
 };
 
+std::shared_ptr<Command> createCommandByType(CommandType name);
 std::shared_ptr<Command> createCommandByName(std::string name);
+
 
 class Begin : public Command {
 public:
-    static constexpr std::string_view name = "begin";
+    static constexpr CommandType type = CommandType::Begin;
+    CommandType getType() const override { return type; }
+
     void execute(Processor& proc, ProgramExecutor& executor) override {}
-    void save(std::ofstream& file) const override { file << name; }
 };
 
 class End : public Command {
 public:
-    static constexpr std::string_view name = "end";
+    static constexpr CommandType type = CommandType::End;
+    CommandType getType() const override { return type; }
+
     void execute(Processor& proc, ProgramExecutor& executor) override {}
-    void save(std::ofstream& file) const override { file << name; }
 };
 
 class In : public Command {
 public:
-    static constexpr std::string_view name = "in";
+    static constexpr CommandType type = CommandType::In;
+    CommandType getType() const override { return type; }
+
     void execute(Processor& proc, ProgramExecutor& executor) override;
-    void save(std::ofstream& file) const override { file << name; }
 };
 
 class Out : public Command {
 public:
-    static constexpr std::string_view name = "out";
+    static constexpr CommandType type = CommandType::Out;
+    CommandType getType() const override { return type; }
+
     void execute(Processor& proc, ProgramExecutor& executor) override;
-    void save(std::ofstream& file) const override { file << name; }
 };
 
 class Add : public Command {
 public:
-    static constexpr std::string_view name = "add";
+    static constexpr CommandType type = CommandType::Add;
+    CommandType getType() const override { return type; }
+
     void execute(Processor& proc, ProgramExecutor& executor) override;
-    void save(std::ofstream& file) const override { file << name; }
 };
 
 class Sub : public Command {
 public:
-    static constexpr std::string_view name = "sub";
+    static constexpr CommandType type = CommandType::Sub;
+    CommandType getType() const override { return type; }
+
     void execute(Processor& proc, ProgramExecutor& executor) override;
-    void save(std::ofstream& file) const override { file << name; }
 };
 
 class Mul : public Command {
 public:
-    static constexpr std::string_view name = "mul";
+        static constexpr CommandType type = CommandType::Mul;
+    CommandType getType() const override { return type; }
+
     void execute(Processor& proc, ProgramExecutor& executor) override;
-    void save(std::ofstream& file) const override { file << name; }
 };
 
 class Div : public Command {
 public:
-    static constexpr std::string_view name = "div";
+    static constexpr CommandType type = CommandType::Div;
+    CommandType getType() const override { return type; }
+
     void execute(Processor& proc, ProgramExecutor& executor) override;
-    void save(std::ofstream& file) const override { file << name; }
 };
 
 class Pop : public Command {
 public:
-    static constexpr std::string_view name = "pop";
+    static constexpr CommandType type = CommandType::Pop;
+    CommandType getType() const override { return type; }
+
     void execute(Processor& proc, ProgramExecutor& executor) override;
-    void save(std::ofstream& file) const override { file << name; }
 };
 
 class Push : public Command {
 public:
-    static constexpr std::string_view name = "push";
+    static constexpr CommandType type = CommandType::Push;
+    CommandType getType() const override { return type; }
 
     void execute(Processor& proc, ProgramExecutor& executor) override;
+
     void setArgs(const std::vector<std::string>& args) override;
     std::vector<ArgType> getArgTypes() const { return {ArgType::Number}; }
 
-    void save(std::ofstream& file) const override { file << name << " " << value; }
+    void save(std::ofstream& file) const override { Command::save(file); file << " " << value; }
+    void load(std::ifstream& file) override { file >> value; }
 
 private:
     long long value;
@@ -111,13 +139,15 @@ private:
 
 class Pushr : public Command {
 public:
-    static constexpr std::string_view name = "pushr";
+    static constexpr CommandType type = CommandType::Pushr;
+    CommandType getType() const override { return type; }
 
     void execute(Processor& proc, ProgramExecutor& executor) override;
     void setArgs(const std::vector<std::string>& args) override;
     std::vector<ArgType> getArgTypes() const { return {ArgType::Reg}; }
 
-    void save(std::ofstream& file) const override { file << name << " " << reg; }
+    void save(std::ofstream& file) const override { Command::save(file); file << " " << reg; }
+    void load(std::ifstream& file) override { file >> reg; }
 
 protected:
     std::string reg;
@@ -125,20 +155,23 @@ protected:
 
 class Popr : public Pushr {
 public:
-    static constexpr std::string_view name = "popr";
+    static constexpr CommandType type = CommandType::Popr;
+    CommandType getType() const override { return type; }
+
     void execute(Processor& proc, ProgramExecutor& executor) override;
-    void save(std::ofstream& file) const override { file << name << " " << reg; }
 };
 
 class Jump : public Command {
 public:
-    static constexpr std::string_view name = "jmp";
+    static constexpr CommandType type = CommandType::Jump;
+    CommandType getType() const override { return type; }
 
     void execute(Processor& proc, ProgramExecutor& executor) override;
     void setArgs(const std::vector<std::string>& args) override;
     std::vector<ArgType> getArgTypes() const { return {ArgType::Label}; }
 
-    void save(std::ofstream& file) const override { file << name << " " << label; }
+    void save(std::ofstream& file) const override { Command::save(file); file << " " << label; }
+    void load(std::ifstream& file) override { file >> label; }
 
 protected:
     std::string label;
@@ -146,58 +179,66 @@ protected:
 
 class JumpEQ : public Jump {
 public:
-    static constexpr std::string_view name = "jeq";
+    static constexpr CommandType type = CommandType::JumpEQ;
+    CommandType getType() const override { return type; }
+
     void execute(Processor& proc, ProgramExecutor& executor) override;
-    void save(std::ofstream& file) const override { file << name << " " << label; }
 };
 
 class JumpNEQ : public Jump {
 public:
-    static constexpr std::string_view name = "jne";
+    static constexpr CommandType type = CommandType::JumpNEQ;
+    CommandType getType() const override { return type; }
+
     void execute(Processor& proc, ProgramExecutor& executor) override;
-    void save(std::ofstream& file) const override { file << name << " " << label; }
 };
 
 class JumpG : public Jump {
 public:
-    static constexpr std::string_view name = "ja";
+    static constexpr CommandType type = CommandType::JumpG;
+    CommandType getType() const override { return type; }
+
     void execute(Processor& proc, ProgramExecutor& executor) override;
-    void save(std::ofstream& file) const override { file << name << " " << label; }
 };
 
 class JumpGE : public Jump {
 public:
-    static constexpr std::string_view name = "jae";
+    static constexpr CommandType type = CommandType::JumpGE;
+    CommandType getType() const override { return type; }
+
     void execute(Processor& proc, ProgramExecutor& executor) override;
-    void save(std::ofstream& file) const override { file << name << " " << label; }
 };
 
 class JumpL : public Jump {
 public:
-    static constexpr std::string_view name = "jb";
+    static constexpr CommandType type = CommandType::JumpL;
+    CommandType getType() const override { return type; }
+
     void execute(Processor& proc, ProgramExecutor& executor) override;
-    void save(std::ofstream& file) const override { file << name << " " << label; }
 };
 
 class JumpLE : public Jump {
 public:
-    static constexpr std::string_view name = "jbe";
+    static constexpr CommandType type = CommandType::JumpLE;
+    CommandType getType() const override { return type; }
+
     void execute(Processor& proc, ProgramExecutor& executor) override;
-    void save(std::ofstream& file) const override { file << name << " " << label; }
 };
 
 class Call : public Jump {
 public:
-    static constexpr std::string_view name = "call";
+    static constexpr CommandType type = CommandType::Call;
+    CommandType getType() const override { return type; }
+
     void execute(Processor& proc, ProgramExecutor& executor) override;
-    void save(std::ofstream& file) const override { file << name << " " << label; }
 };
 
 class Ret : public Command {
 public:
-    static constexpr std::string_view name = "ret";
+    static constexpr CommandType type = CommandType::Ret;
+    CommandType getType() const override { return type; }
+
     void execute(Processor& proc, ProgramExecutor& executor) override;
-    void save(std::ofstream& file) const override { file << name; }
 };
 
 }

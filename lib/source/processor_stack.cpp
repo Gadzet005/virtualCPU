@@ -15,7 +15,7 @@ void ProcessorStack::pushFunction(size_t calledFrom) {
 long long ProcessorStack::popValue() {
     StackEntity* toPop = pop().get();
     if (toPop->getType() == StackEntity::Type::Number) {
-        return static_cast<StackNumber*>(toPop)->getValue();
+        return dynamic_cast<StackNumber*>(toPop)->getValue();
     } else {
         throw EmptyStackError("Вызов метода popValue на пустом стэке");
     }
@@ -26,7 +26,7 @@ size_t ProcessorStack::popFunction() {
     while (!empty()) {
         toPop = pop().get();
         if (toPop->getType() == StackEntity::Type::Function) {
-            return static_cast<StackFunction*>(toPop)->getCalledFrom();
+            return dynamic_cast<StackFunction*>(toPop)->getCalledFrom();
         }
     }
     throw EmptyStackError("Вызов метода popFunction на пустом стэке");

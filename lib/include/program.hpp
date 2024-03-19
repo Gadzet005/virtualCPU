@@ -14,7 +14,7 @@ public:
     void addCommand(Command* cmd);
     void addLabel(const std::string& label);
     
-    void compile();
+    void compile() const;
     size_t findStart() const;
 
     void save(const std::string& path) const;
